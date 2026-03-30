@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Planificador de Actividades">
+  <rect width="512" height="512" rx="112" fill="#005ba8"/>
+  <rect x="72" y="72" width="368" height="368" rx="76" fill="#ffffff" opacity="0.1"/>
+  <path d="M150 132h146c26.51 0 48 21.49 48 48v198c0 26.51-21.49 48-48 48H188c-26.51 0-48-21.49-48-48V132h10z" fill="#ffffff"/>
+  <path d="M210 208h152M210 268h152M210 328h104" stroke="#005ba8" stroke-linecap="round" stroke-width="28"/>
+  <circle cx="372" cy="146" r="50" fill="#f4b400"/>
+  <path d="M362 124h20v44h-20zM350 136h44v20h-44z" fill="#005ba8"/>
+</svg>

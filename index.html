@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Planificador de Actividades</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#005ba8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Planificador">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales-all.global.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<header>
+  <div class="app-brand">Planificador</div>
+</header>
+<div class="nav-accent"></div>
+<div id="appStatus" class="app-status" hidden></div>
+
+<div id="mainView" class="container">
+  <h2 class="app-title">Registro de Actividades</h2>
+
+  <div class="auth-section">
+    <button id="loginBtn" class="btn-login" style="display: none;">Iniciar sesi&oacute;n con Google</button>
+    <button id="logoutBtn" class="btn-logout" style="display: none;">Cerrar sesi&oacute;n</button>
+
+    <div id="sheetLinkSection" class="sheet-link-card" style="display: none;">
+      <div id="sheetLinkForm" class="sheet-link-form">
+        <label for="sheetUrl">URL de tu hoja de Google Sheets</label>
+        <input type="url" id="sheetUrl" placeholder="Pega aqu&iacute; la URL de tu copia">
+        <button id="btnVincularHoja" class="btn-primary">Vincular hoja</button>
+      </div>
+
+      <div id="sheetLinkedPanel" class="sheet-linked-panel" style="display: none;">
+        <p id="sheetLinkedInfo" class="sheet-link-info"></p>
+        <button id="btnDesvincularHoja" class="btn-secondary">Desvincular hoja</button>
+      </div>
+
+      <p id="sheetLinkStatus" class="sheet-link-status" hidden></p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="input-group">
+      <label for="fecha">Fecha</label>
+      <div class="date-input-shell" data-date-shell-for="fecha">
+        <input type="date" id="fecha" class="native-date-input" data-requires-sheet="true">
+        <span class="date-input-display" data-date-display-for="fecha">Seleccionar fecha</span>
+      </div>
+    </div>
+
+    <div class="time-row">
+      <div class="input-group">
+        <label for="horaInicio">Hora de inicio</label>
+        <select id="horaInicio" data-requires-sheet="true"></select>
+      </div>
+
+      <div class="input-group">
+        <label for="horaFin">Hora de fin</label>
+        <select id="horaFin" data-requires-sheet="true"></select>
+      </div>
+    </div>
+
+    <div class="type-status-row">
+      <div class="input-group">
+        <label for="tipo">Tipo de actividad</label>
+        <select id="tipo" data-requires-sheet="true">
+          <option>Informe</option>
+          <option>Visita</option>
+          <option>Entrevista</option>
+          <option>Reuni&oacute;n</option>
+          <option>Contactar</option>
+          <option>Entrega</option>
+          <option>Otro</option>
+        </select>
+      </div>
+
+      <label class="checkbox-inline" for="realizado">
+        <input type="checkbox" id="realizado" data-requires-sheet="true">
+        <span>Realizado</span>
+      </label>
+    </div>
+
+    <div class="input-group">
+      <label for="detalle">Detalle</label>
+      <textarea id="detalle" placeholder="Ej: Entrevista con familia..." autocomplete="off" rows="2" data-requires-sheet="true"></textarea>
+    </div>
+
+    <div class="actions">
+      <button id="btnGuardar" class="btn-primary" data-requires-sheet="true">Guardar registro</button>
+      <button id="btnCancelar" class="btn-secondary" style="display: none;" data-requires-sheet="true">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="lista" class="feed-container"></div>
+</div>
+
+<div id="searchView" class="container" style="display:none;">
+  <h2 class="app-title">Buscar registros</h2>
+  <div class="form-card">
+    <div class="input-group">
+      <label for="searchFecha">Fecha (opcional)</label>
+      <div class="date-input-shell" data-date-shell-for="searchFecha">
+        <input type="date" id="searchFecha" class="native-date-input" data-requires-sheet="true">
+        <span class="date-input-display is-placeholder" data-date-display-for="searchFecha">Todas las fechas</span>
+      </div>
+    </div>
+    <div class="input-group">
+      <label for="searchHora">Hora (opcional)</label>
+      <select id="searchHora" data-requires-sheet="true">
+        <option value="">Todas las horas</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="searchKeyword">Palabra clave (opcional)</label>
+      <input type="search" id="searchKeyword" placeholder="Buscar en tipo o detalle..." autocomplete="off" data-requires-sheet="true">
+    </div>
+    <button id="btnBuscar" class="btn-primary" data-requires-sheet="true">Buscar</button>
+    <button id="btnLimpiarBusqueda" class="btn-secondary" data-requires-sheet="true">Limpiar</button>
+    <button id="btnVolverBusqueda" class="btn-secondary" data-requires-sheet="true">Volver</button>
+  </div>
+
+  <div id="searchResults" class="feed-container"></div>
+</div>
+
+<div id="calendarView" class="container" style="display:none;">
+  <h2 class="app-title">Calendario de Actividades</h2>
+  <div id="calendar"></div>
+</div>
+
+<nav class="bottom-nav">
+  <button id="navHome" class="nav-item active">Inicio</button>
+  <button id="navCalendar" class="nav-item" data-requires-sheet="true">Calendario</button>
+  <button id="navSearch" class="nav-item" data-requires-sheet="true">Buscar</button>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
